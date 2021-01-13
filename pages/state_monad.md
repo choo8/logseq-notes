@@ -4,5 +4,5 @@ title: State Monad
 
 ## Definition
 ###
-## Links
+## References
 ### https://williamyaoh.com/posts/2020-07-12-deriving-state-monad.html
