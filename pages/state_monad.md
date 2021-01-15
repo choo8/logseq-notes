@@ -2,7 +2,7 @@
 title: State Monad
 ---
 
-## Definition (Haskell)
+## Definition
 ### `newtype State s a = State {runState :: s -> (s, a)}`
 ###
 ```haskell
