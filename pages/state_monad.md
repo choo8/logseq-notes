@@ -4,17 +4,17 @@ title: State Monad
 
 ## Definition
 ### `newtype State s a = State {runState :: s -> (s, a)}`
-###
+### `get` allows you to obtain the state value
 ```haskell
 get :: State s s
 get = (\s -> (s, s))
 ```
-###
+### `put` allows you to specify state value
 ```haskell
 put :: s -> State s ()
 put = (\s -> (s, ()))
 ```
-###
+### `modify` allows you to use a function to modify the state value
 ```haskell
 modify :: (s -> s) - > State s ()
 modify f = do
