@@ -61,8 +61,31 @@ instance Monad m => Alternative (MaybeT m) where
 ```
 #### `MaybeT` is also an instance of `MonadTrans`, which implements `lift`. In this example, `lift` is useful for "lifting" functions from `String` into `MaybeT IO String`, as seen in the `getPassphrase` function
 ```haskell
+class MonadTrans t where
+  lift :: Monad m => m a -> t m a
+
 instance MonadTrans MaybeT where
     lift = MaybeT . (liftM Just)
+```
+##### If we do not have the `lift` function, it would be inconvenient to work with values in the base monad and require us to wrap values up in the data constructor
+```haskell
+modify' :: (s -> Either e s) -> EitherT e (State s) ()
+modify' f = EitherT $ do
+  s0 <- get
+  case f s0 of
+    Left e -> return $ Left e
+    Right s1 -> do
+      put $! s1
+      return $ Right ()
+```
+vs
+```haskell
+modify' :: (s -> Either e s) -> EitherT e (State s) ()
+modify' f = do
+  s0 <- lift get
+  case f s0 of
+    Left e -> exitEarly e
+    Right s1 -> lift $ put $! s1
 ```
 #### The monadic bind from `MaybeT m` also eliminates the checking of the values of `Maybe`. This allows us to make full use of the monadic binds from both `IO` and `Maybe` monads instead of only one of them and then writing boilerplate code for the other
 ```haskell
@@ -95,3 +118,4 @@ runWriterT :: WriterT w m a-> m (a, w)
 ### https://en.wikibooks.org/wiki/Haskell/Monad_transformers
 ### https://en.wikibooks.org/wiki/Haskell/Alternative_and_MonadPlus
 ### http://hackage.haskell.org/package/transformers-0.5.6.2/docs/Control-Monad-Trans-Class.html
+### https://www.fpcomplete.com/haskell/tutorial/monad-transformers/
